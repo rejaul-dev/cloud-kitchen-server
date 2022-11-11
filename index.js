@@ -19,39 +19,40 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const serviceCollection = client.db("cloudKitchen").collection("services");
-// for home page
+    const reviewCollection = client.db('cloudKitchen').collection('reviews')
+
+    // to show 3 data on the home page
     app.get("/home-services", async (req, res) => {
       const query = {};
       const cursor = serviceCollection.find(query).limit(3);
       const service = await cursor.toArray();
-      console.log(service)
+      console.log(service);
       res.send(service);
     });
 
+    //to get all services on services page
     app.get("/services", async (req, res) => {
       const query = {};
       const cursor = serviceCollection.find(query);
       const service = await cursor.toArray();
-      console.log(service)
+      console.log(service);
       res.send(service);
     });
 
-    app.get('/services/:id', async (req, res)=>{
+    // to get dynamic service id
+    app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {_id: ObjectId(id)}
-      const service = await serviceCollection.findOne(query)
+      const query = { _id: ObjectId(id) };
+      const service = await serviceCollection.findOne(query);
       res.send(service);
-    })
+    });
 
-    app.post("/services", async (req, res) => {
-      const services = req.body;
-      const result = await serviceCollection.insertOne(services);
+    // to insert data in the mongodb data base
+    app.post("/reviews", async (req, res) => {
+      const reviews = req.body;
+      const result = await reviewCollection.insertOne(reviews);
       res.send(result);
     });
-
-
-
-    
   } finally {
   }
 }
