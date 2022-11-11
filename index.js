@@ -19,7 +19,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const serviceCollection = client.db("cloudKitchen").collection("services");
-    const reviewCollection = client.db('cloudKitchen').collection('reviews')
+    const reviewCollection = client.db("cloudKitchen").collection("reviews");
 
     // to show 3 data on the home page
     app.get("/home-services", async (req, res) => {
@@ -45,6 +45,25 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const service = await serviceCollection.findOne(query);
       res.send(service);
+    });
+
+    // to insert data in the mongodb data base
+    app.post("/services", async (req, res) => {
+      const services = req.body;
+      const result = await serviceCollection.insertOne(services);
+      res.send(result);
+    });
+
+    app.get("/reviews", async (req, res) => {
+      let query = {};
+      if (req.query.email) {
+        query = {
+          email: req.query.email,
+        };
+      }
+      const cursor = reviewCollection.find(query);
+      const review = await cursor.toArray();
+      res.json(review);
     });
 
     // to insert data in the mongodb data base
